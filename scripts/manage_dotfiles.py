@@ -17,77 +17,143 @@ class DotfileManager:
         self.dotfiles_dir.mkdir(exist_ok=True)
         self.backup_dir.mkdir(exist_ok=True)
 
-    def backup_existing_file(self, file_path):
-        """Create a backup of an existing file with timestamp."""
-        if not file_path.exists():
+    def get_relative_path(self, file_path):
+        """Get the relative path from home directory."""
+        home = Path.home()
+        try:
+            return file_path.relative_to(home)
+        except ValueError:
+            return file_path.name
+
+    def backup_existing_path(self, path):
+        """Create a backup of an existing file or directory with timestamp."""
+        if not path.exists():
             return None
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        backup_path = self.backup_dir / f"{file_path.name}_{timestamp}"
-        shutil.copy2(file_path, backup_path)
+        relative_path = self.get_relative_path(path)
+        backup_path = self.backup_dir / f"{relative_path}_{timestamp}"
+
+        # Create parent directories in backup location
+        backup_path.parent.mkdir(parents=True, exist_ok=True)
+
+        if path.is_dir():
+            shutil.copytree(path, backup_path, dirs_exist_ok=True)
+        else:
+            shutil.copy2(path, backup_path)
+
         return backup_path
 
     def add_dotfile(self, file_path):
-        """Add a dotfile to the repository and create a symlink."""
+        """Add a dotfile or directory to the repository and create symlinks."""
         file_path = Path(file_path).expanduser().resolve()
 
         if not file_path.exists():
             print(f"Error: {file_path} does not exist")
             return False
 
-        # Determine the target path in the repo
-        repo_file = self.dotfiles_dir / file_path.name
+        # Get the path relative to home directory
+        relative_path = self.get_relative_path(file_path)
+        repo_path = self.dotfiles_dir / relative_path
 
-        # Backup existing file in home directory
+        # Create parent directories in repo
+        repo_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Backup existing file/directory
         if file_path.exists():
-            backup = self.backup_existing_file(file_path)
+            backup = self.backup_existing_path(file_path)
             if backup:
                 print(f"Created backup at {backup}")
 
-        # Move the file to the repo if it's not already there
-        if not repo_file.exists():
-            shutil.copy2(file_path, repo_file)
-            file_path.unlink()
+        # Handle directories and files
+        if file_path.is_dir():
+            # Copy directory contents if not already in repo
+            if not repo_path.exists():
+                shutil.copytree(file_path, repo_path, dirs_exist_ok=True)
+                shutil.rmtree(file_path)
+            else:
+                print(f"Directory already exists in repo: {repo_path}")
+        else:
+            # Copy file if not already in repo
+            if not repo_path.exists():
+                shutil.copy2(file_path, repo_path)
+                file_path.unlink()
 
-        # Create symlink
-        file_path.symlink_to(repo_file)
-        print(f"Created symlink: {file_path} -> {repo_file}")
+        # Create symlink (handling parent directories)
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        if file_path.exists() and file_path.is_symlink():
+            file_path.unlink()
+        file_path.symlink_to(repo_path)
+        print(f"Created symlink: {file_path} -> {repo_path}")
         return True
 
-    def restore_dotfile(self, file_name):
-        """Restore a dotfile from the repository to home directory."""
-        repo_file = self.dotfiles_dir / file_name
-        home_file = Path.home() / f".{file_name}"
+    def restore_dotfile(self, file_path):
+        """Restore a dotfile or directory from the repository to its original location."""
+        # Handle both relative and absolute paths
+        if file_path.startswith("/"):
+            relative_path = self.get_relative_path(Path(file_path))
+        else:
+            relative_path = Path(file_path)
 
-        if not repo_file.exists():
-            print(f"Error: {file_name} not found in repository")
+        repo_path = self.dotfiles_dir / relative_path
+        home_path = Path.home() / relative_path
+
+        if not repo_path.exists():
+            print(f"Error: {relative_path} not found in repository")
             return False
 
-        if home_file.exists() or home_file.is_symlink():
-            backup = self.backup_existing_file(home_file)
+        # Backup existing file/directory if it exists
+        if home_path.exists() or home_path.is_symlink():
+            backup = self.backup_existing_path(home_path)
             if backup:
                 print(f"Created backup at {backup}")
-            home_file.unlink()
+            if home_path.is_dir() and not home_path.is_symlink():
+                shutil.rmtree(home_path)
+            else:
+                home_path.unlink()
 
-        home_file.symlink_to(repo_file)
-        print(f"Restored {file_name} to {home_file}")
+        # Create parent directories
+        home_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Create symlink
+        home_path.symlink_to(repo_path)
+        print(f"Restored {relative_path} to {home_path}")
         return True
 
     def list_dotfiles(self):
-        """List all dotfiles in the repository."""
+        """List all dotfiles in the repository with their symlink status."""
         print("\nManaged dotfiles:")
-        for file_path in self.dotfiles_dir.iterdir():
-            if file_path.is_file() or file_path.is_dir():
-                print(f"- {file_path.name}")
-                symlink = Path.home() / f".{file_path.name}"
-                if symlink.is_symlink():
-                    print(f"  └── Linked: {symlink} -> {symlink.resolve()}")
+
+        def print_tree(directory, prefix=""):
+            paths = sorted(directory.iterdir(), key=lambda p: (not p.is_dir(), p.name))
+            for i, path in enumerate(paths):
+                is_last = i == len(paths) - 1
+                current_prefix = "└── " if is_last else "├── "
+
+                relative_path = path.relative_to(self.dotfiles_dir)
+                home_path = Path.home() / relative_path
+
+                print(f"{prefix}{current_prefix}{relative_path}")
+
+                if home_path.is_symlink():
+                    target = home_path.resolve()
+                    print(
+                        f"{prefix}{'    ' if is_last else '│   '}→ {home_path} -> {target}"
+                    )
                 else:
-                    print("  └── Not linked")
+                    print(f"{prefix}{'    ' if is_last else '│   '}→ Not linked")
+
+                if path.is_dir():
+                    new_prefix = prefix + ("    " if is_last else "│   ")
+                    print_tree(path, new_prefix)
+
+        print_tree(self.dotfiles_dir)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Manage dotfiles with symlinks")
+    parser = argparse.ArgumentParser(
+        description="Manage dotfiles and directories with symlinks"
+    )
     parser.add_argument(
         "--repo", type=str, default=os.getcwd(), help="Path to the dotfiles repository"
     )
@@ -95,7 +161,7 @@ def main():
         "command", choices=["add", "restore", "list"], help="Command to execute"
     )
     parser.add_argument(
-        "file", nargs="?", help="File to add or restore (not needed for list)"
+        "file", nargs="?", help="File/directory to add or restore (not needed for list)"
     )
 
     args = parser.parse_args()
@@ -103,18 +169,22 @@ def main():
     manager = DotfileManager(args.repo)
     manager.setup_directories()
 
-    if args.command == "add":
-        if not args.file:
-            print("Error: Please specify a file to add")
-            return
-        manager.add_dotfile(args.file)
-    elif args.command == "restore":
-        if not args.file:
-            print("Error: Please specify a file to restore")
-            return
-        manager.restore_dotfile(args.file)
-    elif args.command == "list":
-        manager.list_dotfiles()
+    try:
+        if args.command == "add":
+            if not args.file:
+                print("Error: Please specify a file or directory to add")
+                return
+            manager.add_dotfile(args.file)
+        elif args.command == "restore":
+            if not args.file:
+                print("Error: Please specify a file or directory to restore")
+                return
+            manager.restore_dotfile(args.file)
+        elif args.command == "list":
+            manager.list_dotfiles()
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return 1
 
 
 if __name__ == "__main__":
