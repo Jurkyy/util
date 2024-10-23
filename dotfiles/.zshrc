@@ -78,8 +78,7 @@ typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
-plugins+=(zsh-vi-mode)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting zsh-vi-mode ssh-agent)
 # doing this via brew cuz this shit don work
 source $ZSH/oh-my-zsh.sh
 
@@ -115,7 +114,7 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 # Aliases
-alias zshrc="nvim ~/.zshrc"
+alias zshrc="$EDITOR ~/.zshrc"
 
 alias gb="git checkout -b"
 alias gs="git status"
@@ -179,8 +178,8 @@ eval $(thefuck --alias)
 eval "$(direnv hook zsh)"
 
 #ssh agent bullshit to make stuff work when using git across ssh
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_ed25519
+#eval "$(ssh-agent -s)"
+#ssh-add ~/.ssh/id_ed25519
 
 # Prepend system directories to PATH
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
