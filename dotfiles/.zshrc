@@ -120,6 +120,7 @@ alias zshrc="nvim ~/.zshrc"
 alias gb="git checkout -b"
 alias gs="git status"
 alias pd="git pull"
+alias gd="git diff ."
 
 alias n="nvim"
 alias g="git"
