@@ -126,6 +126,7 @@ alias g="git"
 
 alias woto="cd ~/projects/woto"
 alias ca="cd ~/projects/code-avonturen"
+alias util="cd ~/projects/util"
 alias docs="cd /mnt/c/Users/wolfb/Documents/!Personal"
 alias uni="cd /mnt/c/Users/wolfb/Documents/!Uni"
 
