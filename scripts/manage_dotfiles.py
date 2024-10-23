@@ -4,6 +4,14 @@ import shutil
 from pathlib import Path
 import datetime
 import argparse
+import inquirer
+import sys
+
+
+def handle_keyboard_interrupt():
+    """Handle Ctrl+C gracefully"""
+    print("\nOperation cancelled by user")
+    sys.exit(0)
 
 
 class DotfileManager:
@@ -147,7 +155,128 @@ class DotfileManager:
                     new_prefix = prefix + ("    " if is_last else "│   ")
                     print_tree(path, new_prefix)
 
-        print_tree(self.dotfiles_dir)
+    def get_managed_configs(self):
+        """Get list of all managed configurations."""
+        configs = []
+        for path in self.dotfiles_dir.rglob("*"):
+            if path.is_file() or (path.is_dir() and not any(path.iterdir())):
+                configs.append(str(path.relative_to(self.dotfiles_dir)))
+        return sorted(configs)
+
+    def create_backup(self, config_name, backup_name=None):
+        """Create a backup of a managed configuration.
+
+        Args:
+            config_name (str): Name of the configuration to backup
+            backup_name (str, optional): Custom name for the backup. If None, uses timestamp
+
+        Returns:
+            bool: True if backup was successful, False otherwise
+        """
+        config_path = self.dotfiles_dir / config_name
+        if not config_path.exists():
+            print(f"Error: Configuration '{config_name}' not found in repository")
+            return False
+
+        # Construct home path correctly (handling .config and other nested paths)
+        home_path = Path.home() / config_name
+        if not home_path.exists():
+            print(f"Error: No active configuration at {home_path}")
+            return False
+
+        # Create backup with custom name or timestamp
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_suffix = backup_name if backup_name else timestamp
+        backup_path = self.backup_dir / f"{config_name}_{backup_suffix}"
+
+        # Ensure backup parent directory exists
+        backup_path.parent.mkdir(parents=True, exist_ok=True)
+
+        try:
+            if home_path.is_dir():
+                shutil.copytree(home_path, backup_path, dirs_exist_ok=True)
+            else:
+                shutil.copy2(home_path, backup_path)
+            print(f"Created backup at {backup_path}")
+            return True
+        except Exception as e:
+            print(f"Error creating backup: {str(e)}")
+            return False
+
+            print_tree(self.dotfiles_dir)
+
+    def backup_all(self):
+        """Create backups of all managed configurations."""
+        configs = self.get_managed_configs()
+        backed_up = 0
+        failed = 0
+
+        backup_name = None
+        questions = [
+            inquirer.Text(
+                "backup_name",
+                message="Enter backup name for all configs (press Enter for timestamp)",
+            )
+        ]
+        try:
+            answers = inquirer.prompt(questions)
+            if answers is None:  # User pressed Esc/Ctrl+C
+                return False
+            backup_name = answers["backup_name"]
+        except KeyboardInterrupt:
+            handle_keyboard_interrupt()
+
+        for config in configs:
+            print(f"\nBacking up {config}...")
+            if self.create_backup(config, backup_name):
+                backed_up += 1
+            else:
+                failed += 1
+
+        print(f"\nBackup complete: {backed_up} succeeded, {failed} failed")
+        return backed_up > 0
+
+
+def prompt_for_config(manager, message="Select configuration"):
+    """Prompt user to select a configuration."""
+    configs = manager.get_managed_configs()
+    if not configs:
+        print("No configurations found in repository")
+        return None
+
+    try:
+        questions = [
+            inquirer.List("config", message=message, choices=configs, carousel=True)
+        ]
+        answers = inquirer.prompt(questions)
+        return answers["config"] if answers else None
+    except KeyboardInterrupt:
+        handle_keyboard_interrupt()
+
+
+def show_operation_menu(manager, operation="restore"):
+    """Show consistent menu for backup/restore operations."""
+    try:
+        questions = [
+            inquirer.List(
+                "choice",
+                message=f"{operation.capitalize()} options",
+                choices=[
+                    f"{operation.capitalize()} all",
+                    f"Select specific config to {operation}",
+                    "Cancel",
+                ],
+                carousel=True,
+            )
+        ]
+        answers = inquirer.prompt(questions)
+        if answers is None:  # User pressed Esc
+            print("\nOperation cancelled by user")
+            return None
+
+        return answers["choice"] if answers else None
+    except KeyboardInterrupt:
+        handle_keyboard_interrupt()
 
 
 def main():
@@ -158,10 +287,17 @@ def main():
         "--repo", type=str, default=os.getcwd(), help="Path to the dotfiles repository"
     )
     parser.add_argument(
-        "command", choices=["add", "restore", "list"], help="Command to execute"
+        "command",
+        choices=["add", "restore", "list", "backup"],
+        help="Command to execute",
     )
     parser.add_argument(
-        "file", nargs="?", help="File/directory to add or restore (not needed for list)"
+        "file",
+        nargs="?",
+        help="File/directory to add, restore, or backup (optional for restore/list)",
+    )
+    parser.add_argument(
+        "--name", type=str, help="Custom name for backup (optional, for backup command)"
     )
 
     args = parser.parse_args()
@@ -173,18 +309,61 @@ def main():
         if args.command == "add":
             if not args.file:
                 print("Error: Please specify a file or directory to add")
-                return
+                return 1
             manager.add_dotfile(args.file)
+
         elif args.command == "restore":
-            if not args.file:
-                print("Error: Please specify a file or directory to restore")
-                return
-            manager.restore_dotfile(args.file)
+            if args.file:
+                manager.restore_dotfile(args.file)
+            else:
+                choice = show_operation_menu(manager, "restore")
+                if choice == "Restore all":
+                    manager.restore_all()
+                elif choice == "Select specific config to restore":
+                    config = prompt_for_config(
+                        manager, "Select configuration to restore"
+                    )
+                    if config:
+                        manager.restore_dotfile(config)
+
+        elif args.command == "backup":
+            if args.file:
+                manager.create_backup(args.file, args.name)
+            else:
+                choice = show_operation_menu(manager, "backup")
+                if choice == "Backup all":
+                    manager.backup_all()
+                elif choice == "Select specific config to backup":
+                    config = prompt_for_config(
+                        manager, "Select configuration to backup"
+                    )
+                    if config:
+                        try:
+                            questions = [
+                                inquirer.Text(
+                                    "backup_name",
+                                    message="Enter backup name (press Enter for timestamp)",
+                                )
+                            ]
+                            answers = inquirer.prompt(questions)
+                            if answers is None:  # User pressed Esc
+                                print("\nOperation cancelled by user")
+                                return 0
+                            backup_name = (
+                                answers.get("backup_name") if answers else None
+                            )
+                            manager.create_backup(config, backup_name)
+                        except KeyboardInterrupt:
+                            handle_keyboard_interrupt()
+
         elif args.command == "list":
             manager.list_dotfiles()
+
     except Exception as e:
         print(f"Error: {str(e)}")
         return 1
+
+    return 0
 
 
 if __name__ == "__main__":
