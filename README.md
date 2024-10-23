@@ -2,6 +2,8 @@
 
 Personal Linux utility scripts and configuration manager. Primarily focused on managing dotfiles and system configurations with automated backup and symlinking.
 
+NOTE: I also use this repo to store my own scripts and dotfiles, so be aware of that when cloning.
+
 ## Config Manager
 
 The heart of this repository is a robust configuration management system that handles:
