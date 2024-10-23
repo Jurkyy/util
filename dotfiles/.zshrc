@@ -118,6 +118,7 @@ eval "$(pyenv init -)"
 alias zshrc="nvim ~/.zshrc"
 
 alias gb="git checkout -b"
+alias gs="git status"
 alias pd="git pull"
 
 alias n="nvim"
@@ -131,7 +132,7 @@ alias uni="cd /mnt/c/Users/wolfb/Documents/!Uni"
 alias bat="batcat"
 alias ask="/home/wolf/projects/util/.pixi/envs/default/bin/python ~/projects/util/scripts/ask_claude.py"
 
-alias pic="pixi init pixi-py --format pyproject"
+alias pic="pixi init --format pyproject"
 alias pii="pixi add"
 alias pir="pixi run python"
 
