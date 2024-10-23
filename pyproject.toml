@@ -1,5 +1,5 @@
 [project]
-authors = [{name = "Wolfgang Bubberman", email = "wolfbubberman@gmail.com"}]
+authors = [{ name = "Wolfgang Bubberman", email = "wolfbubberman@gmail.com" }]
 dependencies = []
 description = "Add a short description here"
 name = "util"
@@ -17,4 +17,10 @@ platforms = ["linux-64"]
 [tool.pixi.pypi-dependencies]
 util = { path = ".", editable = true }
 
-[tool.pixi.tasks]
+[tool.pixi.dependencies]
+anthropic = ">=0.37.1,<0.38"
+pdf2image = ">=1.17.0,<2"
+black = ">=24.10.0,<25"
+
+[tool.hatch.build.targets.wheel]
+packages = ["util"]
