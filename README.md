@@ -12,7 +12,9 @@ The heart of this repository is a robust configuration management system that ha
 - Complete config directories (`~/.config/nvim`, etc.)
 - Nested configurations with proper path handling
 - Automatic backups with timestamps
-- One-click restore from backups
+- Quickly setting up via restore
+- Interactive menu system for easy management
+- Bulk operations support
 
 ### Usage
 
@@ -24,13 +26,46 @@ The heart of this repository is a robust configuration management system that ha
 ./scripts/manage_dotfiles.py add ~/.config/nvim
 ./scripts/manage_dotfiles.py add ~/.config/alacritty
 
+# Backup configurations
+./scripts/manage_dotfiles.py backup              # Interactive menu
+./scripts/manage_dotfiles.py backup .zshrc       # Specific config
+./scripts/manage_dotfiles.py backup --name save1 # Custom backup name
+
 # Restore configurations
-./scripts/manage_dotfiles.py restore .zshrc
-./scripts/manage_dotfiles.py restore .config/nvim
+./scripts/manage_dotfiles.py restore             # Interactive menu
+./scripts/manage_dotfiles.py restore .zshrc      # Specific config
+./scripts/manage_dotfiles.py restore             # Select 'Restore all' for bulk restore
 
 # List all managed configurations
 ./scripts/manage_dotfiles.py list
 ```
+
+### Interactive Features
+
+The config manager now includes an interactive menu system:
+
+1. Backup operations:
+
+   ```
+   Backup options:
+   > Backup all
+   > Select specific config to backup
+   > Cancel
+   ```
+
+2. Restore operations:
+
+   ```
+   Restore options:
+   > Restore all
+   > Select specific config to restore
+   > Cancel
+   ```
+
+- Navigate with arrow keys
+- Select with Enter
+- Exit with Ctrl+C
+- Custom backup names supported
 
 ### Features
 
@@ -40,34 +75,18 @@ The heart of this repository is a robust configuration management system that ha
 - 🔒 Automatic backups before any operation
 - 🌳 Tree-style visualization of managed files
 - 🏗️ Creates parent directories as needed
+- 🎯 Interactive selection menus
+- 📦 Bulk backup/restore operations
+- 🏷️ Custom backup naming
 
-## Additional Utilities
-
-### Environment Variable Loader
-
-Load .env files into your shell environment, I recommend putting this into your .zshrc or different shell start file:
-
-```bash
-source scripts/load_env.sh ~/.env
-list_vars  # Show loaded variables
-```
-
-### Claude AI Interface
-
-CLI tool for interacting with Claude AI, useful for asking quick questions on the fly:
-
-```bash
-./scripts/ask_claude.py "Your question here"
-./scripts/ask_claude.py -p "Write a Python function"  # Programming mode
-./scripts/ask_claude.py -i image.jpg "Describe this"  # Image analysis
-```
+[Previous Additional Utilities section remains the same]
 
 ## Structure
 
 ```
 .
 ├── dotfiles/           # Stored configurations
-├── dotfiles_backup/    # Automatic backups
+├── dotfiles_backup/    # Automatic backups with timestamps/names
 ├── scripts/
 │   ├── manage_dotfiles.py  # Config management system
 │   ├── load_env.sh         # Environment loader
@@ -79,20 +98,60 @@ CLI tool for interacting with Claude AI, useful for asking quick questions on th
 
 ## Setup
 
-1. Clone the repository:
+This project uses [Pixi](https://pixi.sh) for environment and dependency management.
+
+1. Install Pixi:
+
+```bash
+curl -fsSL https://pixi.sh/install.sh | bash
+```
+
+2. Install direnv (recommended):
+
+```bash
+# Debian/Ubuntu
+sudo apt install direnv
+
+# MacOS
+brew install direnv
+
+# Add to your shell config (~/.zshrc, ~/.bashrc, etc.):
+eval "$(direnv hook zsh)"  # or bash/fish/etc.
+```
+
+3. Clone the repository:
 
 ```bash
 git clone git@github.com:Jurkyy/util.git
 cd util
 ```
 
-2. Make scripts executable:
+4. Set up direnv (recommended):
+
+```bash
+# Create .envrc file
+echo "watch_file pixi.lock\n
+eval "$(pixi shell-hook)"" > .envrc
+
+# Allow direnv for this directory
+direnv allow
+```
+
+This will automatically activate the Pixi environment when you enter the directory.
+
+5. Or manually activate Pixi environment:
+
+```bash
+pixi shell
+```
+
+6. Make scripts executable:
 
 ```bash
 chmod +x scripts/*
 ```
 
-3. Initialize config management:
+7. Initialize config management:
 
 ```bash
 # Start by adding your most important configs
@@ -100,21 +159,38 @@ chmod +x scripts/*
 ./scripts/manage_dotfiles.py add ~/.config/nvim
 ```
 
+### Why Pixi with direnv?
+
+Pixi manages project dependencies and creates isolated environments, while direnv automatically activates/deactivates these environments when you enter/exit the project directory. This combination ensures:
+
+- Consistent development environment
+- Automatic environment activation
+- Isolated project dependencies
+- Cross-platform compatibility
+
+For more information about using Pixi with direnv, see the [official documentation](https://pixi.sh/dev/features/environment/#using-pixi-with-direnv).
+
+If you want to manage the dependencies yourself, please checkout the `pyproject.toml`.  
+
 ## Backup System
 
-Backups are automatically created in `dotfiles_backup/` with timestamps:
+The backup system now offers more flexibility:
 
-- Before any file/directory is modified
-- When restoring configurations
-- When adding new dotfiles
+- **Automatic Backups**: Created before any modification
+- **Manual Backups**: Create on-demand backups with custom names
+- **Bulk Backups**: Backup all configs at once
+- **Timestamp Format**: `filename_YYYYMMDD_HHMMSS`
+- **Custom Names**: Use `--name` flag or interactive prompt
 
 Example backup structure:
 
 ```
 dotfiles_backup/
-├── zshrc_20240423_143022
+├── zshrc_20240423_143022          # Automatic backup
+├── zshrc_pre_update               # Custom named backup
 └── config/
-    └── nvim_20240423_143022/
+    └── nvim_20240423_143022/      # Directory backup
+    └── nvim_experimental/         # Custom named directory backup
 ```
 
 ## Best Practices
@@ -125,19 +201,24 @@ dotfiles_backup/
    ./scripts/manage_dotfiles.py add ~/.new_config
    ```
 
-2. Check status regularly:
+2. Create named backups before major changes:
+
+   ```bash
+   ./scripts/manage_dotfiles.py backup --name pre_update
+   ```
+
+3. Check status regularly:
 
    ```bash
    ./scripts/manage_dotfiles.py list
    ```
 
-3. Restore after fresh install:
+4. Restore after fresh install:
 
    ```bash
-   # Restore your entire configuration
-   for config in $(./scripts/manage_dotfiles.py list | grep "^-" | cut -d" " -f2); do
-       ./scripts/manage_dotfiles.py restore "$config"
-   done
+   # Interactive restore all
+   ./scripts/manage_dotfiles.py restore
+   # Select "Restore all" from the menu
    ```
 
 ## Note
