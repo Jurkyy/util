@@ -100,7 +100,7 @@ def main():
     parser.add_argument(
         "-m",
         "--model",
-        default="claude-3-5-sonnet-20240620",
+        default="claude-3-5-sonnet-latest",
         help="Specify the Claude model to use",
     )
     parser.add_argument(
