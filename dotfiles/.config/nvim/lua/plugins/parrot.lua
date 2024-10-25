@@ -62,7 +62,7 @@ local M = {
         I have the following code from {{filename}}:
 
         ```{{filetype}}
-        {filecontent}}
+        {{filecontent}}
         ```
 
         Please look at the following section specifically:
@@ -112,7 +112,7 @@ local M = {
         prt.logger.info("Explaining selection with model: " .. model.name)
         prt.Prompt(params, prt.ui.Target.new, model, nil, template)
       end,
-      FixBugs = function(prt, params)
+      Debug = function(prt, params)
         local template = [[
         You are an expert in {{filetype}}.
         Fix bugs in the below code from {{filename}} carefully and logically:
@@ -166,22 +166,7 @@ local M = {
         ]]
         local model_obj = prt.get_model("command")
         prt.logger.info("Creating unit tests for selection with model: " .. model_obj.name)
-        prt.Prompt(params, prt.ui.Target.enew, model_obj, nil, template)
-      end,
-      Debug = function(prt, params)
-        local template = [[
-        I want you to act as {{filetype}} expert.
-        Review the following code, carefully examine it, and report potential
-        bugs and edge cases alongside solutions to resolve them.
-        Keep your explanation short and to the point:
-
-        ```{{filetype}}
-        {{selection}}
-        ```
-        ]]
-        local model_obj = prt.get_model("command")
-        prt.logger.info("Debugging selection with model: " .. model_obj.name)
-        prt.Prompt(params, prt.ui.Target.enew, model_obj, nil, template)
+        prt.Prompt(params, prt.ui.Target.new, model_obj, nil, template)
       end,
       CommitMsg = function(prt, params)
         local futils = require("parrot.file_utils")
@@ -265,6 +250,7 @@ local M = {
   keys = {
     { "<C-g>c", "<cmd>PrtChatNew<cr>", mode = { "n", "i" }, desc = "New Chat" },
     { "<C-g>c", ":<C-u>'<,'>PrtChatNew<cr>", mode = { "v" }, desc = "Visual Chat New" },
+    { "<C-g>h", "<cmd>PrtChatRespond<cr>", mode = { "n", "i", "v" }, desc = "Trigger Chat Response" },
     { "<C-g>t", "<cmd>PrtChatToggle<cr>", mode = { "n", "i" }, desc = "Toggle Popup Chat" },
     { "<C-g>f", "<cmd>PrtChatFinder<cr>", mode = { "n", "i" }, desc = "Chat Finder" },
     { "<C-g>r", "<cmd>PrtRewrite<cr>", mode = { "n", "i" }, desc = "Inline Rewrite" },
@@ -279,7 +265,6 @@ local M = {
     { "<C-g>a", ":<C-u>'<,'>PrtAppend<cr>", mode = { "v" }, desc = "Visual Append" },
     { "<C-g>o", "<cmd>PrtPrepend<cr>", mode = { "n", "i" }, desc = "Prepend" },
     { "<C-g>o", ":<C-u>'<,'>PrtPrepend<cr>", mode = { "v" }, desc = "Visual Prepend" },
-    { "<C-g>e", ":<C-u>'<,'>PrtEnew<cr>", mode = { "v" }, desc = "Visual Enew" },
     { "<C-g>s", "<cmd>PrtStop<cr>", mode = { "n", "i", "v", "x" }, desc = "Stop" },
     {
       "<C-g>i",
