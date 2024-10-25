@@ -114,7 +114,7 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 # Aliases
-alias zshrc="$EDITOR ~/.zshrc"
+alias zshrc="nvim ~/.zshrc"
 
 alias gb="git checkout -b"
 alias gs="git status"

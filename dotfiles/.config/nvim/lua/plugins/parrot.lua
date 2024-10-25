@@ -78,7 +78,7 @@ local M = {
       end,
       CompleteMultiContext = function(prt, params)
         local template = [[
-        I have the following code from {{filename}} and other realted files:
+        I have the following code from {{filename}} and other related files:
 
         ```{{filetype}}
         {{multifilecontent}}
