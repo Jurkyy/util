@@ -122,7 +122,7 @@ def main():
         "-f",
         "--filetype",
         type=str,
-        help="Overwrite automatic detection of filetype (pdf, png, jpeg, jpg)",
+        help="Overwrite automatic detection of filetype for image (pdf, png, jpeg, jpg)",
     )
     parser.add_argument(
         "prompt",
