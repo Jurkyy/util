@@ -1,3 +1,12 @@
+# [0.3.0](https://github.com/Jurkyy/util/compare/v0.2.0...v0.3.0) (2024-10-26)
+
+
+### Features
+
+* improve ask ([922190c](https://github.com/Jurkyy/util/commit/922190c70c8b8584d4029d5b6bb27f1d064e1d42))
+
+
+
 # [0.2.0](https://github.com/Jurkyy/util/compare/v0.1.0...v0.2.0) (2024-10-26)
 
 
