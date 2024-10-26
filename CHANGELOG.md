@@ -1,4 +1,13 @@
-# 0.1.0 (2024-10-25)
+# [0.2.0](https://github.com/Jurkyy/util/compare/v0.1.0...v0.2.0) (2024-10-26)
+
+
+### Features
+
+* turn on vertical split on tab creation ([0f07990](https://github.com/Jurkyy/util/commit/0f07990366c1fd9d9a38e17ac2ea9c926117640c))
+
+
+
+# [0.1.0](https://github.com/Jurkyy/util/compare/9eee1d6f761abcbfa4a6761be6d84ca74eb4b97c...v0.1.0) (2024-10-25)
 
 
 ### Bug Fixes
