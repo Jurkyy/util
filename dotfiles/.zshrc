@@ -129,9 +129,8 @@ alias ca="cd ~/projects/code-avonturen"
 alias util="cd ~/projects/util"
 alias docs="cd /mnt/c/Users/wolfb/Documents/!Personal"
 alias uni="cd /mnt/c/Users/wolfb/Documents/!Uni"
-
 alias bat="batcat"
-alias ask="/home/wolf/projects/util/.pixi/envs/default/bin/python ~/projects/util/scripts/ask_claude.py"
+alias ask="nvim -c \"PChatNew\""
 alias catclip='f() { cat "$@" | xclip -selection clipboard; }; f'
 
 alias pic="pixi init --format pyproject"

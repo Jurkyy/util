@@ -1,3 +1,17 @@
+###############################################################################
+#                                 DISCLAIMER                                     #
+#                                                                               #
+# THIS FILE IS NOW REDUNDANT/DEPRECATED                                         #
+#                                                                               #
+# The functionality has been replaced by Neovim + Parrot integration.           #
+# For the current setup:                                                        #
+#   1. Check the zshrc file for the launch command                             #
+#   2. Refer to the Neovim lua plugin configuration for implementation details  #
+#                                                                               #
+# This file is kept for historical/reference purposes only.                     #
+###############################################################################
+
+
 import os
 import argparse
 import sys
