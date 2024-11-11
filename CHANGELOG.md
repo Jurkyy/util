@@ -1,3 +1,12 @@
+## [0.6.2](https://github.com/Jurkyy/util/compare/v0.6.1...v0.6.2) (2024-11-11)
+
+
+### Bug Fixes
+
+* randomization broken ([9084451](https://github.com/Jurkyy/util/commit/908445185fb136ef6956b49645402832fc0634e1))
+
+
+
 ## [0.6.1](https://github.com/Jurkyy/util/compare/v0.6.0...v0.6.1) (2024-11-11)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add macro_recorder script ([fcba706](https://github.com/Jurkyy/util/commit/fcba706dcaaec1dbc5d168370a437ba3ba075e42))
-
-
-
-# [0.3.0](https://github.com/Jurkyy/util/compare/v0.2.0...v0.3.0) (2024-10-26)
-
-
-### Features
-
-* improve ask ([922190c](https://github.com/Jurkyy/util/commit/922190c70c8b8584d4029d5b6bb27f1d064e1d42))
 
 
 
