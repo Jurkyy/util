@@ -223,7 +223,7 @@ class MacroRecorder:
         return macros
 
     def save_macro(self, filename):
-        if self.events and self.recording:
+        if self.events and self.state == "recording":
             self.add_final_timing()
 
         filepath = os.path.join(self.MACRO_DIR, filename)
