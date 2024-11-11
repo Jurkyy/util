@@ -16,16 +16,16 @@ class MacroRecorder:
         self.last_recorded_time = None
 
         self.smooth_mouse = {
-            "enabled": False,
-            "steps": 20,  # Number of steps for smooth movement
+            "enabled": True,
+            "steps": 100,  # Number of steps for smooth movement
             "delay": 0.001,  # Delay between steps in seconds
         }
 
         # Randomization settings
         self.randomization = {
-            "enabled": False,
+            "enabled": True,
             "position_jitter": 5,  # pixels
-            "time_jitter_percent": 15,  # percentage of original delay
+            "time_jitter_percent": 8,  # percentage of original delay
             "max_extra_delay": 0.5,  # maximum additional random delay
         }
 
@@ -201,15 +201,14 @@ class MacroRecorder:
         if not self.randomization["enabled"]:
             return delay
 
-        # Apply percentage-based jitter
         jitter_range = delay * (self.randomization["time_jitter_percent"] / 100)
-        jittered_delay = delay + random.uniform(-jitter_range, jitter_range)
+        jittered_delay = max(
+            0, delay + random.uniform(-jitter_range, jitter_range) + (jitter_range / 10)
+        )
 
-        # Apply additional random delay
-        extra_delay = random.uniform(0, self.randomization["max_extra_delay"])
+        max_extra_delay = self.randomization["max_extra_delay"]
 
-        # Ensure final delay is at least the initial delay
-        return max(delay, jittered_delay + extra_delay)
+        return min(max_extra_delay, jittered_delay)
 
     def load_all_macros(self):
         macros = {}
