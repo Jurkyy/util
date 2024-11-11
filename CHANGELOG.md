@@ -1,3 +1,12 @@
+# [0.5.0](https://github.com/Jurkyy/util/compare/v0.4.0...v0.5.0) (2024-11-11)
+
+
+### Features
+
+* bugfix saving of macro ([6529511](https://github.com/Jurkyy/util/commit/6529511f595a5ab594e7995674426335dc4651b9))
+
+
+
 # [0.4.0](https://github.com/Jurkyy/util/compare/v0.3.0...v0.4.0) (2024-11-11)
 
 
