@@ -1,3 +1,12 @@
+# [0.4.0](https://github.com/Jurkyy/util/compare/v0.3.0...v0.4.0) (2024-11-11)
+
+
+### Features
+
+* add macro_recorder script ([fcba706](https://github.com/Jurkyy/util/commit/fcba706dcaaec1dbc5d168370a437ba3ba075e42))
+
+
+
 # [0.3.0](https://github.com/Jurkyy/util/compare/v0.2.0...v0.3.0) (2024-10-26)
 
 
