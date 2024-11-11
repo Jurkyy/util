@@ -35,6 +35,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/distlib-0.3.9-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/distro-1.9.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/dulwich-0.21.7-py312h66e93f0_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/evdev-1.7.1-py312h66e93f0_3.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/exceptiongroup-1.2.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/expat-2.6.3-h5888daf_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/filelock-3.16.1-pyhd8ed1ab_0.conda
@@ -128,6 +129,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/pycparser-2.22-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pydantic-2.9.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/pydantic-core-2.23.4-py312h12e396e_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/pynput-1.7.7-py312h7900ff3_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pyproject_hooks-1.2.0-pyh7850678_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pysocks-1.7.1-pyha2e5f31_6.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/python-3.12.7-hc5c86c4_0_cpython.conda
@@ -135,6 +137,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/python-editor-1.0.4-py_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/python-fastjsonschema-2.20.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/python-installer-0.7.0-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/python-xlib-0.33-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/python_abi-3.12-5_cp312.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/pyyaml-6.0.2-py312h66e93f0_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/rapidfuzz-3.10.0-py312h2ec8cdc_0.conda
@@ -713,6 +716,26 @@ packages:
   - pkg:pypi/dulwich?source=hash-mapping
   size: 939096
   timestamp: 1728583358203
+- kind: conda
+  name: evdev
+  version: 1.7.1
+  build: py312h66e93f0_3
+  build_number: 3
+  subdir: linux-64
+  url: https://conda.anaconda.org/conda-forge/linux-64/evdev-1.7.1-py312h66e93f0_3.conda
+  sha256: 14cbc28b50cdacc656b11cafaa944ef17fe80f25043bd8350e093a6726799013
+  md5: ac7358ad758953a3f3e9151030634931
+  depends:
+  - __glibc >=2.17,<3.0.a0
+  - libgcc >=13
+  - python >=3.12,<3.13.0a0
+  - python_abi 3.12.* *_cp312
+  license: BSD-3-Clause
+  license_family: BSD
+  purls:
+  - pkg:pypi/evdev?source=hash-mapping
+  size: 72703
+  timestamp: 1725514237068
 - kind: conda
   name: exceptiongroup
   version: 1.2.2
@@ -2430,6 +2453,27 @@ packages:
   size: 1611784
   timestamp: 1726525286507
 - kind: conda
+  name: pynput
+  version: 1.7.7
+  build: py312h7900ff3_1
+  build_number: 1
+  subdir: linux-64
+  url: https://conda.anaconda.org/conda-forge/linux-64/pynput-1.7.7-py312h7900ff3_1.conda
+  sha256: 03877f7e3720fa0dcc5cdf5defccddee510d0675fad53144fa59aadf9ed0482b
+  md5: 11a9a4f8dd2b2ec8409dbaaae9bb4631
+  depends:
+  - evdev
+  - python >=3.12,<3.13.0a0
+  - python-xlib
+  - python_abi 3.12.* *_cp312
+  - six
+  license: LGPL-3.0-only
+  license_family: LGPL
+  purls:
+  - pkg:pypi/pynput?source=hash-mapping
+  size: 165728
+  timestamp: 1730936218151
+- kind: conda
   name: pyproject_hooks
   version: 1.2.0
   build: pyh7850678_0
@@ -2573,6 +2617,23 @@ packages:
   - pkg:pypi/installer?source=hash-mapping
   size: 233285
   timestamp: 1679300488457
+- kind: conda
+  name: python-xlib
+  version: '0.33'
+  build: pyhd8ed1ab_0
+  subdir: noarch
+  noarch: python
+  url: https://conda.anaconda.org/conda-forge/noarch/python-xlib-0.33-pyhd8ed1ab_0.conda
+  sha256: cbecd55239b7c3c6b9a9f966da25b516fa22d2e3e208c2e1487ee8460d1cfc0b
+  md5: 9fff27938cf0a8551c795e9d84dcb488
+  depends:
+  - python >=3.3
+  - six >=1.10.0
+  license: LGPL-2.1-or-later
+  purls:
+  - pkg:pypi/python-xlib?source=hash-mapping
+  size: 137853
+  timestamp: 1672238521483
 - kind: conda
   name: python_abi
   version: '3.12'
@@ -2975,7 +3036,7 @@ packages:
   name: util
   version: 0.1.0
   path: .
-  sha256: cff4b3cef7f041b1c8349dc25900ea03f619c77a4df03f27a715a56cf9c7e33b
+  sha256: 9c8b7d09cb0c1f2c4e2885f654c57cfdecc722ba178842903831cff67fead55f
   requires_python: '>=3.11'
   editable: true
 - kind: conda
