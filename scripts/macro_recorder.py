@@ -208,7 +208,7 @@ class MacroRecorder:
 
         max_extra_delay = self.randomization["max_extra_delay"]
 
-        return min(max_extra_delay, jittered_delay)
+        return max(delay, min(max_extra_delay, jittered_delay))
 
     def load_all_macros(self):
         macros = {}
