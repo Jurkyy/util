@@ -488,7 +488,7 @@ def main():
         while True:
             print(
                 "\nOptions:\n1. Start Recording\n2. Play Once\n3. Play in Loop\n"
-                "4. Save Macro\n5. Reload Macros\n6. Configure Randomization\n7. Exit"
+                "4. Save Macro\n5. Edit macro\n6. Configure Randomization\n7. Exit"
             )
             choice = input("Enter your choice: ").strip()
 
@@ -512,7 +512,7 @@ def main():
                 recorder.save_macro(filename)
             elif choice == "5":
                 macros = recorder.load_all_macros()
-                print("Macros reloaded.")
+                recorder.edit_macro(macros)
             elif choice == "6":
                 recorder.configure_randomization()
             elif choice == "7":
