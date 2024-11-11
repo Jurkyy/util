@@ -1,3 +1,12 @@
+## [0.6.1](https://github.com/Jurkyy/util/compare/v0.6.0...v0.6.1) (2024-11-11)
+
+
+### Bug Fixes
+
+* randomization severe optimalisation ([55e839f](https://github.com/Jurkyy/util/commit/55e839f65f4736f91c1b1b064a16950c1f6e4fe8))
+
+
+
 # [0.6.0](https://github.com/Jurkyy/util/compare/v0.5.0...v0.6.0) (2024-11-11)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * improve ask ([922190c](https://github.com/Jurkyy/util/commit/922190c70c8b8584d4029d5b6bb27f1d064e1d42))
-
-
-
-# [0.2.0](https://github.com/Jurkyy/util/compare/v0.1.0...v0.2.0) (2024-10-26)
-
-
-### Features
-
-* turn on vertical split on tab creation ([0f07990](https://github.com/Jurkyy/util/commit/0f07990366c1fd9d9a38e17ac2ea9c926117640c))
 
 
 
