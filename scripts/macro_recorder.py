@@ -327,7 +327,7 @@ class MacroRecorder:
                 loop,
                 start_index=self.pause_state["current_index"],
                 current_iteration=self.pause_state["iteration"],
-                total_start_time=self.pause_state["total_start_time"]
+                total_start_time=self.pause_state["total_start_time"],
             )
             return
 
@@ -339,7 +339,7 @@ class MacroRecorder:
             choice_idx = int(choice) - 1
             macro_name = list(macros.keys())[choice_idx]
             selected_macro = macros[macro_name]
-            
+
             # Store initial pause state
             self.pause_state = {
                 "enabled": True,
@@ -348,14 +348,21 @@ class MacroRecorder:
                 "selected_macro": selected_macro,
                 "iteration": 1,
                 "loop": loop,
-                "total_start_time": time.time()
+                "total_start_time": time.time(),
             }
-            
+
             self.play_events(selected_macro, loop)
         except (IndexError, ValueError):
             print("Invalid choice.")
 
-    def play_events(self, selected_macro, loop=False, start_index=0, current_iteration=1, total_start_time=None):
+    def play_events(
+        self,
+        selected_macro,
+        loop=False,
+        start_index=0,
+        current_iteration=1,
+        total_start_time=None,
+    ):
         if not selected_macro:
             print("No events recorded!")
             return
@@ -531,10 +538,10 @@ class MacroRecorder:
             elif self.state == "recording":
                 self.stop_recording()
         elif key == Key.space:  # Add space bar handler
-        if self.state == "playing":
-            self.pause_playback()
-        elif self.state == "paused":
-            self.resume_playback()
+            if self.state == "playing":
+                self.pause_playback()
+            elif self.state == "paused":
+                self.resume_playback()
 
     def on_release(self, key):
         if self.state == "recording":
