@@ -1,3 +1,12 @@
+# [0.7.0](https://github.com/Jurkyy/util/compare/v0.6.2...v0.7.0) (2024-11-12)
+
+
+### Features
+
+* add pause function ([0809377](https://github.com/Jurkyy/util/commit/080937758b3a7f338d9c2739f3070d4722a945e0))
+
+
+
 ## [0.6.2](https://github.com/Jurkyy/util/compare/v0.6.1...v0.6.2) (2024-11-11)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * bugfix saving of macro ([6529511](https://github.com/Jurkyy/util/commit/6529511f595a5ab594e7995674426335dc4651b9))
-
-
-
-# [0.4.0](https://github.com/Jurkyy/util/compare/v0.3.0...v0.4.0) (2024-11-11)
-
-
-### Features
-
-* add macro_recorder script ([fcba706](https://github.com/Jurkyy/util/commit/fcba706dcaaec1dbc5d168370a437ba3ba075e42))
 
 
 
