@@ -29,6 +29,16 @@ class MacroRecorder:
             "max_extra_delay": 0.5,  # maximum additional random delay
         }
 
+        self.pause_state = {
+            "enabled": False,
+            "current_index": 0,
+            "macro_name": None,
+            "selected_macro": None,
+            "iteration": 1,
+            "loop": False,
+            "total_start_time": None,
+        }
+
         # Controllers
         self.mouse_controller = MouseController()
         self.keyboard_controller = KeyboardController()
@@ -308,6 +318,19 @@ class MacroRecorder:
         if not macros:
             print("No macros available!")
             return
+
+        # If we're resuming from a pause, use the stored macro
+        if self.state == "paused" and self.pause_state["enabled"]:
+            self.state = "playing"
+            self.play_events(
+                self.pause_state["selected_macro"],
+                loop,
+                start_index=self.pause_state["current_index"],
+                current_iteration=self.pause_state["iteration"],
+                total_start_time=self.pause_state["total_start_time"]
+            )
+            return
+
         print("\nAvailable Macros:")
         for idx, macro_name in enumerate(macros.keys(), 1):
             print(f"{idx}. {macro_name}")
@@ -316,25 +339,50 @@ class MacroRecorder:
             choice_idx = int(choice) - 1
             macro_name = list(macros.keys())[choice_idx]
             selected_macro = macros[macro_name]
+            
+            # Store initial pause state
+            self.pause_state = {
+                "enabled": True,
+                "current_index": 0,
+                "macro_name": macro_name,
+                "selected_macro": selected_macro,
+                "iteration": 1,
+                "loop": loop,
+                "total_start_time": time.time()
+            }
+            
             self.play_events(selected_macro, loop)
         except (IndexError, ValueError):
             print("Invalid choice.")
 
-    def play_events(self, selected_macro, loop=False):
+    def play_events(self, selected_macro, loop=False, start_index=0, current_iteration=1, total_start_time=None):
         if not selected_macro:
             print("No events recorded!")
             return
 
         self.state = "playing"
-        iteration = 1
-        total_start_time = time.time()
+        iteration = current_iteration
+        total_start_time = total_start_time or time.time()
 
-        while self.state == "playing":
+        while True:
+            if self.state != "playing" and self.state != "paused":
+                break
+
+            if self.state == "paused":
+                time.sleep(0.1)
+                continue
+
             print(f"\nStarting iteration {iteration}")
             iteration_start_time = time.time()
 
-            for i in range(len(selected_macro)):
-                if self.state != "playing":
+            for i in range(start_index, len(selected_macro)):
+                if self.state == "paused":
+                    # Store position and wait for resume
+                    self.pause_state["current_index"] = i
+                    self.pause_state["iteration"] = iteration
+                    self.pause_state["total_start_time"] = total_start_time
+                    break
+                elif self.state != "playing":
                     break
 
                 event = selected_macro[i]
@@ -366,6 +414,8 @@ class MacroRecorder:
 
                         # Perform smooth movement
                         for step in range(steps + 1):
+                            if self.state != "playing":
+                                break
                             t = step / steps
                             current_x = int(
                                 current_pos[0] + (jittered_x - current_pos[0]) * t
@@ -422,6 +472,9 @@ class MacroRecorder:
                         f"[{current_time:.2f}s] Final delay - Target time: {target_time:.2f}s"
                     )
 
+            if self.state == "paused":
+                continue
+
             iteration_end_time = time.time()
             iteration_duration = iteration_end_time - iteration_start_time
             total_duration = iteration_end_time - total_start_time
@@ -433,9 +486,22 @@ class MacroRecorder:
 
             print("\nStarting next iteration...")
             iteration += 1
+            start_index = 0  # Reset start_index for next iteration
             time.sleep(0.5)
 
-        self.state = "idle"
+        if self.state != "paused":
+            self.state = "idle"
+            self.pause_state["enabled"] = False
+
+    def pause_playback(self):
+        if self.state == "playing":
+            self.state = "paused"
+            print("\nPlayback paused. Press SPACE to resume or ESC to stop.")
+
+    def resume_playback(self):
+        if self.state == "paused":
+            self.state = "playing"
+            print("\nPlayback resumed...")
 
     def start_recording(self):
         self.events.clear()
@@ -464,6 +530,11 @@ class MacroRecorder:
                 self.stop_playing()
             elif self.state == "recording":
                 self.stop_recording()
+        elif key == Key.space:  # Add space bar handler
+        if self.state == "playing":
+            self.pause_playback()
+        elif self.state == "paused":
+            self.resume_playback()
 
     def on_release(self, key):
         if self.state == "recording":
@@ -485,8 +556,12 @@ def main():
 
     try:
         while True:
+            state_msg = ""
+            if recorder.state == "paused":
+                state_msg = " (PAUSED)"
+
             print(
-                "\nOptions:\n1. Start Recording\n2. Play Once\n3. Play in Loop\n"
+                f"\nOptions:{state_msg}\n1. Start Recording\n2. Play Once\n3. Play in Loop\n"
                 "4. Save Macro\n5. Edit macro\n6. Configure Randomization\n7. Exit"
             )
             choice = input("Enter your choice: ").strip()
