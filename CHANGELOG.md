@@ -1,3 +1,12 @@
+## [0.7.1](https://github.com/Jurkyy/util/compare/v0.7.0...v0.7.1) (2024-11-12)
+
+
+### Bug Fixes
+
+* broken indent ([30620d3](https://github.com/Jurkyy/util/commit/30620d36de67e2d881e5cfbe611d349ec47148a1))
+
+
+
 # [0.7.0](https://github.com/Jurkyy/util/compare/v0.6.2...v0.7.0) (2024-11-12)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add normalization ([3c83d67](https://github.com/Jurkyy/util/commit/3c83d67f68af2a79dfd700590c25faecb980d0ff))
-
-
-
-# [0.5.0](https://github.com/Jurkyy/util/compare/v0.4.0...v0.5.0) (2024-11-11)
-
-
-### Features
-
-* bugfix saving of macro ([6529511](https://github.com/Jurkyy/util/commit/6529511f595a5ab594e7995674426335dc4651b9))
 
 
 
