@@ -37,6 +37,8 @@ class MacroRecorder:
             "iteration": 1,
             "loop": False,
             "total_start_time": None,
+            "last_event_time": None,  # Add this to track timing
+            "iteration_start_time": None,  # Add this to track iteration timing
         }
 
         # Controllers
@@ -322,12 +324,15 @@ class MacroRecorder:
         # If we're resuming from a pause, use the stored macro
         if self.state == "paused" and self.pause_state["enabled"]:
             self.state = "playing"
+            print("\nResuming macro playback...")
             self.play_events(
                 self.pause_state["selected_macro"],
-                loop,
+                self.pause_state["loop"],
                 start_index=self.pause_state["current_index"],
                 current_iteration=self.pause_state["iteration"],
                 total_start_time=self.pause_state["total_start_time"],
+                iteration_start_time=self.pause_state["iteration_start_time"],
+                last_event_time=self.pause_state["last_event_time"],
             )
             return
 
@@ -340,6 +345,7 @@ class MacroRecorder:
             macro_name = list(macros.keys())[choice_idx]
             selected_macro = macros[macro_name]
 
+            current_time = time.time()
             # Store initial pause state
             self.pause_state = {
                 "enabled": True,
@@ -348,7 +354,9 @@ class MacroRecorder:
                 "selected_macro": selected_macro,
                 "iteration": 1,
                 "loop": loop,
-                "total_start_time": time.time(),
+                "total_start_time": current_time,
+                "iteration_start_time": current_time,
+                "last_event_time": current_time,
             }
 
             self.play_events(selected_macro, loop)
@@ -362,6 +370,8 @@ class MacroRecorder:
         start_index=0,
         current_iteration=1,
         total_start_time=None,
+        iteration_start_time=None,
+        last_event_time=None,
     ):
         if not selected_macro:
             print("No events recorded!")
@@ -369,7 +379,10 @@ class MacroRecorder:
 
         self.state = "playing"
         iteration = current_iteration
-        total_start_time = total_start_time or time.time()
+        current_time = time.time()
+        total_start_time = total_start_time or current_time
+        iteration_start_time = iteration_start_time or current_time
+        last_event_time = last_event_time or current_time
 
         while True:
             if self.state != "playing" and self.state != "paused":
@@ -379,82 +392,64 @@ class MacroRecorder:
                 time.sleep(0.1)
                 continue
 
-            print(f"\nStarting iteration {iteration}")
-            iteration_start_time = time.time()
-
             for i in range(start_index, len(selected_macro)):
                 if self.state == "paused":
-                    # Store position and wait for resume
-                    self.pause_state["current_index"] = i
-                    self.pause_state["iteration"] = iteration
-                    self.pause_state["total_start_time"] = total_start_time
+                    # Store position and timing information
+                    current_time = time.time()
+                    self.pause_state.update(
+                        {
+                            "current_index": i,
+                            "iteration": iteration,
+                            "total_start_time": total_start_time,
+                            "iteration_start_time": iteration_start_time,
+                            "last_event_time": last_event_time,
+                            "loop": loop,
+                        }
+                    )
                     break
                 elif self.state != "playing":
                     break
 
                 event = selected_macro[i]
-                # Calculate target time for this event
-                target_time = event["time"]
+                current_time = time.time()
 
-                # Calculate target wait time
-                if i == 0:
-                    wait_time = target_time
+                # Calculate timing based on last event
+                if i == start_index:
+                    # If this is the first event after start/resume
+                    wait_time = 0.1  # Small initial delay
                 else:
-                    wait_time = target_time - selected_macro[i - 1]["time"]
+                    target_time = event["time"]
+                    prev_time = selected_macro[i - 1]["time"]
+                    wait_time = target_time - prev_time
 
                 # Apply randomization to wait time if enabled
                 wait_time = self.apply_time_jitter(wait_time)
 
                 if event["type"] == "mouse":
-                    # Get current and target positions
+                    # ... (existing mouse handling code) ...
+                    time.sleep(wait_time)
                     current_pos = self.mouse_controller.position
                     jittered_x, jittered_y = self.apply_position_jitter(
                         event["x"], event["y"]
                     )
 
                     if self.smooth_mouse["enabled"]:
-                        # Calculate how much time we can spend on smooth movement
-                        # Use 80% of the wait time for movement, leaving 20% as buffer
-                        movement_time = max(0.001, wait_time * 0.8)
-                        steps = self.smooth_mouse["steps"]
-                        step_delay = movement_time / steps
-
-                        # Perform smooth movement
-                        for step in range(steps + 1):
-                            if self.state != "playing":
-                                break
-                            t = step / steps
-                            current_x = int(
-                                current_pos[0] + (jittered_x - current_pos[0]) * t
-                            )
-                            current_y = int(
-                                current_pos[1] + (jittered_y - current_pos[1]) * t
-                            )
-                            self.mouse_controller.position = (current_x, current_y)
-                            time.sleep(step_delay)
-
-                        # Calculate remaining time to wait
-                        remaining_wait = wait_time - movement_time
-                        if remaining_wait > 0:
-                            time.sleep(remaining_wait)
+                        self.move_mouse_smoothly(
+                            current_pos[0], current_pos[1], jittered_x, jittered_y
+                        )
                     else:
-                        # Without smooth movement, wait first then move
-                        time.sleep(wait_time)
                         self.mouse_controller.position = (jittered_x, jittered_y)
 
-                    # Execute click
                     button = Button.left if event["button"] == "left" else Button.right
                     current_time = time.time() - iteration_start_time
                     print(
-                        f"[{current_time:.2f}s] Mouse click: {button.name} at ({jittered_x}, {jittered_y}) - Target time: {target_time:.2f}s"
+                        f"[{current_time:.2f}s] Mouse click: {button.name} at ({jittered_x}, {jittered_y})"
                     )
                     self.mouse_controller.press(button)
                     self.mouse_controller.release(button)
 
                 elif event["type"] == "keyboard":
-                    # Wait before keyboard action
                     time.sleep(wait_time)
-
                     if event["is_special"]:
                         key = self.special_keys_reverse.get(event["key"])
                     else:
@@ -462,22 +457,18 @@ class MacroRecorder:
 
                     current_time = time.time() - iteration_start_time
                     if event["action"] == "press":
-                        print(
-                            f"[{current_time:.2f}s] Key press: {key} - Target time: {target_time:.2f}s"
-                        )
+                        print(f"[{current_time:.2f}s] Key press: {key}")
                         self.keyboard_controller.press(key)
                     else:
-                        print(
-                            f"[{current_time:.2f}s] Key release: {key} - Target time: {target_time:.2f}s"
-                        )
+                        print(f"[{current_time:.2f}s] Key release: {key}")
                         self.keyboard_controller.release(key)
 
                 elif event["type"] == "delay":
                     time.sleep(wait_time)
                     current_time = time.time() - iteration_start_time
-                    print(
-                        f"[{current_time:.2f}s] Final delay - Target time: {target_time:.2f}s"
-                    )
+                    print(f"[{current_time:.2f}s] Delay")
+
+                last_event_time = time.time()
 
             if self.state == "paused":
                 continue
@@ -493,7 +484,8 @@ class MacroRecorder:
 
             print("\nStarting next iteration...")
             iteration += 1
-            start_index = 0  # Reset start_index for next iteration
+            start_index = 0
+            iteration_start_time = time.time()
             time.sleep(0.5)
 
         if self.state != "paused":
@@ -533,11 +525,11 @@ class MacroRecorder:
             self.record_key(key, True)
 
         if key == Key.esc:
-            if self.state == "playing":
+            if self.state == "playing" or self.state == "paused":
                 self.stop_playing()
             elif self.state == "recording":
                 self.stop_recording()
-        elif key == Key.space:  # Add space bar handler
+        elif key == Key.space:
             if self.state == "playing":
                 self.pause_playback()
             elif self.state == "paused":
