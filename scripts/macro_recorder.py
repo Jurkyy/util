@@ -322,20 +322,11 @@ class MacroRecorder:
             return
 
         # If we're resuming from a pause, use the stored macro
-        if self.state == "paused" and self.pause_state["enabled"]:
+        if self.pause_state["enabled"] and self.state == "paused":
             self.state = "playing"
             print("\nResuming macro playback...")
-            self.play_events(
-                self.pause_state["selected_macro"],
-                self.pause_state["loop"],
-                start_index=self.pause_state["current_index"],
-                current_iteration=self.pause_state["iteration"],
-                total_start_time=self.pause_state["total_start_time"],
-                iteration_start_time=self.pause_state["iteration_start_time"],
-                last_event_time=self.pause_state["last_event_time"],
-            )
-            return
-
+            return  # Let the existing play_events continue
+            
         print("\nAvailable Macros:")
         for idx, macro_name in enumerate(macros.keys(), 1):
             print(f"{idx}. {macro_name}")
@@ -345,10 +336,11 @@ class MacroRecorder:
             macro_name = list(macros.keys())[choice_idx]
             selected_macro = macros[macro_name]
 
+            # Initialize pause state
+            self.state = "playing"
             current_time = time.time()
-            # Store initial pause state
-            self.pause_state = {
-                "enabled": True,
+            self.pause_state.update({
+                "enabled": False,  # Will be set to True when paused
                 "current_index": 0,
                 "macro_name": macro_name,
                 "selected_macro": selected_macro,
@@ -357,140 +349,100 @@ class MacroRecorder:
                 "total_start_time": current_time,
                 "iteration_start_time": current_time,
                 "last_event_time": current_time,
-            }
+            })
 
             self.play_events(selected_macro, loop)
         except (IndexError, ValueError):
             print("Invalid choice.")
 
-    def play_events(
-        self,
-        selected_macro,
-        loop=False,
-        start_index=0,
-        current_iteration=1,
-        total_start_time=None,
-        iteration_start_time=None,
-        last_event_time=None,
-    ):
+    def play_events(self, selected_macro, loop=False):
         if not selected_macro:
             print("No events recorded!")
             return
 
-        self.state = "playing"
-        iteration = current_iteration
-        current_time = time.time()
-        total_start_time = total_start_time or current_time
-        iteration_start_time = iteration_start_time or current_time
-        last_event_time = last_event_time or current_time
-
         while True:
-            if self.state != "playing" and self.state != "paused":
-                break
-
-            if self.state == "paused":
-                time.sleep(0.1)
-                continue
-
+            # Main playback loop
+            start_index = self.pause_state["current_index"]
+            current_time = time.time()
+            
             for i in range(start_index, len(selected_macro)):
-                if self.state == "paused":
-                    # Store position and timing information
-                    current_time = time.time()
-                    self.pause_state.update(
-                        {
-                            "current_index": i,
-                            "iteration": iteration,
-                            "total_start_time": total_start_time,
-                            "iteration_start_time": iteration_start_time,
-                            "last_event_time": last_event_time,
-                            "loop": loop,
-                        }
-                    )
-                    break
-                elif self.state != "playing":
-                    break
+                if self.state != "playing":  # Check state before each action
+                    if self.state == "paused":
+                        self.pause_state.update({
+                            "enabled": True,
+                            "current_index": i
+                        })
+                        while self.state == "paused":  # Wait while paused
+                            time.sleep(0.1)
+                        if self.state != "playing":  # If we exited pause with ESC
+                            return
+                        continue  # Resume from current index
+                    else:  # state is "idle" (stopped)
+                        return
 
                 event = selected_macro[i]
-                current_time = time.time()
-
-                # Calculate timing based on last event
+                
+                # Calculate wait time
                 if i == start_index:
-                    # If this is the first event after start/resume
-                    wait_time = 0.1  # Small initial delay
+                    wait_time = 0.1
                 else:
                     target_time = event["time"]
                     prev_time = selected_macro[i - 1]["time"]
                     wait_time = target_time - prev_time
-
-                # Apply randomization to wait time if enabled
+                
                 wait_time = self.apply_time_jitter(wait_time)
-
+                
+                # Execute the event
                 if event["type"] == "mouse":
-                    # ... (existing mouse handling code) ...
                     time.sleep(wait_time)
                     current_pos = self.mouse_controller.position
-                    jittered_x, jittered_y = self.apply_position_jitter(
-                        event["x"], event["y"]
-                    )
-
+                    jittered_x, jittered_y = self.apply_position_jitter(event["x"], event["y"])
+                    
                     if self.smooth_mouse["enabled"]:
-                        self.move_mouse_smoothly(
-                            current_pos[0], current_pos[1], jittered_x, jittered_y
-                        )
+                        self.move_mouse_smoothly(current_pos[0], current_pos[1], jittered_x, jittered_y)
                     else:
                         self.mouse_controller.position = (jittered_x, jittered_y)
-
+                        
                     button = Button.left if event["button"] == "left" else Button.right
-                    current_time = time.time() - iteration_start_time
-                    print(
-                        f"[{current_time:.2f}s] Mouse click: {button.name} at ({jittered_x}, {jittered_y})"
-                    )
+                    elapsed = time.time() - self.pause_state["iteration_start_time"]
+                    print(f"[{elapsed:.2f}s] Mouse click: {button.name} at ({jittered_x}, {jittered_y})")
                     self.mouse_controller.press(button)
                     self.mouse_controller.release(button)
-
+                    
                 elif event["type"] == "keyboard":
                     time.sleep(wait_time)
                     if event["is_special"]:
                         key = self.special_keys_reverse.get(event["key"])
                     else:
                         key = event["key"]
-
-                    current_time = time.time() - iteration_start_time
+                        
+                    elapsed = time.time() - self.pause_state["iteration_start_time"]
                     if event["action"] == "press":
-                        print(f"[{current_time:.2f}s] Key press: {key}")
+                        print(f"[{elapsed:.2f}s] Key press: {key}")
                         self.keyboard_controller.press(key)
                     else:
-                        print(f"[{current_time:.2f}s] Key release: {key}")
+                        print(f"[{elapsed:.2f}s] Key release: {key}")
                         self.keyboard_controller.release(key)
-
+                        
                 elif event["type"] == "delay":
                     time.sleep(wait_time)
-                    current_time = time.time() - iteration_start_time
-                    print(f"[{current_time:.2f}s] Delay")
+                    elapsed = time.time() - self.pause_state["iteration_start_time"]
+                    print(f"[{elapsed:.2f}s] Delay")
 
-                last_event_time = time.time()
-
-            if self.state == "paused":
-                continue
-
-            iteration_end_time = time.time()
-            iteration_duration = iteration_end_time - iteration_start_time
-            total_duration = iteration_end_time - total_start_time
-            print(f"\nIteration {iteration} completed in {iteration_duration:.2f}s")
-            print(f"Total time elapsed: {total_duration:.2f}s")
-
+            # End of iteration
             if not loop or self.state != "playing":
                 break
-
+                
             print("\nStarting next iteration...")
-            iteration += 1
-            start_index = 0
-            iteration_start_time = time.time()
+            self.pause_state.update({
+                "current_index": 0,
+                "iteration": self.pause_state["iteration"] + 1,
+                "iteration_start_time": time.time()
+            })
             time.sleep(0.5)
 
-        if self.state != "paused":
-            self.state = "idle"
-            self.pause_state["enabled"] = False
+        self.state = "idle"
+        self.pause_state["enabled"] = False
 
     def pause_playback(self):
         if self.state == "playing":
@@ -501,6 +453,12 @@ class MacroRecorder:
         if self.state == "paused":
             self.state = "playing"
             print("\nPlayback resumed...")
+
+    def stop_playing(self):
+        if self.state in ["playing", "paused"]:
+            self.state = "idle"
+            self.pause_state["enabled"] = False
+            print("Playback stopped.")
 
     def start_recording(self):
         self.events.clear()
@@ -514,12 +472,6 @@ class MacroRecorder:
             self.add_final_timing()
             self.state = "idle"
             print("Recording stopped.")
-
-    def stop_playing(self):
-        if self.state == "playing":
-            self.state = "idle"
-            print("Playback stopped.")
-
     def on_press(self, key):
         if self.state == "recording":
             self.record_key(key, True)

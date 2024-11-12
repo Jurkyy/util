@@ -1,0 +1,442 @@
+[
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 3543,
+        "y": 955,
+        "button": "left",
+        "time": 0.0
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 3830,
+        "y": 952,
+        "button": "left",
+        "time": 0.7356595993041992
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 3906,
+        "y": 1058,
+        "button": "left",
+        "time": 2.4968671798706055
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 3869,
+        "y": 915,
+        "button": "left",
+        "time": 3.240065097808838
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 3546,
+        "y": 895,
+        "button": "left",
+        "time": 3.970484972000122
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 3542,
+        "y": 894,
+        "button": "left",
+        "time": 4.370885133743286
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 5094,
+        "y": 206,
+        "button": "left",
+        "time": 5.650485038757324
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4868,
+        "y": 550,
+        "button": "left",
+        "time": 6.591356039047241
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4716,
+        "y": 656,
+        "button": "left",
+        "time": 16.36934494972229
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4742,
+        "y": 470,
+        "button": "left",
+        "time": 18.363138914108276
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 3842,
+        "y": 972,
+        "button": "left",
+        "time": 23.927966594696045
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 3974,
+        "y": 949,
+        "button": "left",
+        "time": 24.74998378753662
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4038,
+        "y": 1045,
+        "button": "left",
+        "time": 25.405982971191406
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4572,
+        "y": 1025,
+        "button": "left",
+        "time": 26.810463190078735
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4546,
+        "y": 1032,
+        "button": "left",
+        "time": 32.410783767700195
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4546,
+        "y": 1032,
+        "button": "left",
+        "time": 32.97478437423706
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4754,
+        "y": 998,
+        "button": "left",
+        "time": 36.33187532424927
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2609,
+        "y": 1272,
+        "button": "left",
+        "time": 46.53647518157959
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2609,
+        "y": 1272,
+        "button": "left",
+        "time": 47.12495493888855
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2609,
+        "y": 1272,
+        "button": "left",
+        "time": 51.30706524848938
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2605,
+        "y": 363,
+        "button": "left",
+        "time": 53.82209396362305
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2605,
+        "y": 363,
+        "button": "left",
+        "time": 56.17302870750427
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4481,
+        "y": 1015,
+        "button": "left",
+        "time": 58.18052363395691
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4700,
+        "y": 1047,
+        "button": "left",
+        "time": 65.20341682434082
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4576,
+        "y": 1034,
+        "button": "left",
+        "time": 69.33462381362915
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4570,
+        "y": 1032,
+        "button": "left",
+        "time": 70.08510112762451
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4935,
+        "y": 1285,
+        "button": "left",
+        "time": 72.40014839172363
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 5070,
+        "y": 1419,
+        "button": "left",
+        "time": 72.9373083114624
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 5077,
+        "y": 1418,
+        "button": "left",
+        "time": 79.90553188323975
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4573,
+        "y": 1011,
+        "button": "left",
+        "time": 81.03076004981995
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4811,
+        "y": 978,
+        "button": "left",
+        "time": 105.73958349227905
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4926,
+        "y": 1137,
+        "button": "left",
+        "time": 106.31428575515747
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4859,
+        "y": 1122,
+        "button": "left",
+        "time": 106.67396402359009
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2623,
+        "y": 358,
+        "button": "left",
+        "time": 112.4472279548645
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2617,
+        "y": 363,
+        "button": "left",
+        "time": 113.82399272918701
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2604,
+        "y": 205,
+        "button": "left",
+        "time": 114.71156311035156
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2604,
+        "y": 205,
+        "button": "left",
+        "time": 115.49787306785583
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2607,
+        "y": 1282,
+        "button": "left",
+        "time": 116.84358835220337
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 5088,
+        "y": 1414,
+        "button": "left",
+        "time": 124.38793778419495
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4755,
+        "y": 1339,
+        "button": "left",
+        "time": 125.41807222366333
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2608,
+        "y": 1265,
+        "button": "left",
+        "time": 140.52703142166138
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 2608,
+        "y": 1265,
+        "button": "left",
+        "time": 142.9271125793457
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 5089,
+        "y": 1426,
+        "button": "left",
+        "time": 152.92838072776794
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 5092,
+        "y": 1427,
+        "button": "left",
+        "time": 172.03865242004395
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4290,
+        "y": 400,
+        "button": "left",
+        "time": 174.65782260894775
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4494,
+        "y": 471,
+        "button": "left",
+        "time": 177.30542063713074
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4348,
+        "y": 570,
+        "button": "left",
+        "time": 179.30797839164734
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4310,
+        "y": 393,
+        "button": "left",
+        "time": 180.1998655796051
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4476,
+        "y": 402,
+        "button": "left",
+        "time": 189.4374144077301
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4137,
+        "y": 469,
+        "button": "left",
+        "time": 192.86105847358704
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4219,
+        "y": 703,
+        "button": "left",
+        "time": 193.38380336761475
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 3620,
+        "y": 213,
+        "button": "left",
+        "time": 194.0565664768219
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 5071,
+        "y": 206,
+        "button": "left",
+        "time": 195.11839318275452
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4736,
+        "y": 246,
+        "button": "left",
+        "time": 196.23622035980225
+    },
+    {
+        "type": "mouse",
+        "action": "click",
+        "x": 4655,
+        "y": 435,
+        "button": "left",
+        "time": 202.49260354042053
+    }
+]
