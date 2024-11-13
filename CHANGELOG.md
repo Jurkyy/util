@@ -1,3 +1,12 @@
+# [0.9.0](https://github.com/Jurkyy/util/compare/v0.8.1...v0.9.0) (2024-11-13)
+
+
+### Features
+
+* add gui and extra edit func ([70621a0](https://github.com/Jurkyy/util/commit/70621a0af32491117d7725e1869d5b03fe469211))
+
+
+
 ## [0.8.1](https://github.com/Jurkyy/util/compare/v0.8.0...v0.8.1) (2024-11-12)
 
 
@@ -31,15 +40,6 @@
 ### Features
 
 * add pause function ([0809377](https://github.com/Jurkyy/util/commit/080937758b3a7f338d9c2739f3070d4722a945e0))
-
-
-
-## [0.6.2](https://github.com/Jurkyy/util/compare/v0.6.1...v0.6.2) (2024-11-11)
-
-
-### Bug Fixes
-
-* randomization broken ([9084451](https://github.com/Jurkyy/util/commit/908445185fb136ef6956b49645402832fc0634e1))
 
 
 
