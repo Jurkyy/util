@@ -1,3 +1,12 @@
+## [0.8.1](https://github.com/Jurkyy/util/compare/v0.8.0...v0.8.1) (2024-11-12)
+
+
+### Bug Fixes
+
+* actually pause and resume properly ([dc125a0](https://github.com/Jurkyy/util/commit/dc125a063a4c3b17edae2cf53277028b5c7dea1a))
+
+
+
 # [0.8.0](https://github.com/Jurkyy/util/compare/v0.7.1...v0.8.0) (2024-11-12)
 
 
@@ -31,15 +40,6 @@
 ### Bug Fixes
 
 * randomization broken ([9084451](https://github.com/Jurkyy/util/commit/908445185fb136ef6956b49645402832fc0634e1))
-
-
-
-## [0.6.1](https://github.com/Jurkyy/util/compare/v0.6.0...v0.6.1) (2024-11-11)
-
-
-### Bug Fixes
-
-* randomization severe optimalisation ([55e839f](https://github.com/Jurkyy/util/commit/55e839f65f4736f91c1b1b064a16950c1f6e4fe8))
 
 
 
