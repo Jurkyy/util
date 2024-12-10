@@ -1,3 +1,30 @@
+# [0.9.0](https://github.com/Jurkyy/util/compare/v0.8.1...v0.9.0) (2024-11-13)
+
+
+### Features
+
+* add gui and extra edit func ([70621a0](https://github.com/Jurkyy/util/commit/70621a0af32491117d7725e1869d5b03fe469211))
+
+
+
+## [0.8.1](https://github.com/Jurkyy/util/compare/v0.8.0...v0.8.1) (2024-11-12)
+
+
+### Bug Fixes
+
+* actually pause and resume properly ([dc125a0](https://github.com/Jurkyy/util/commit/dc125a063a4c3b17edae2cf53277028b5c7dea1a))
+
+
+
+# [0.8.0](https://github.com/Jurkyy/util/compare/v0.7.1...v0.8.0) (2024-11-12)
+
+
+### Features
+
+* fix pause such that it starts again at paused point ([cea11bf](https://github.com/Jurkyy/util/commit/cea11bf40478bd6797439224d9b6b61147287388))
+
+
+
 ## [0.7.1](https://github.com/Jurkyy/util/compare/v0.7.0...v0.7.1) (2024-11-12)
 
 
@@ -13,33 +40,6 @@
 ### Features
 
 * add pause function ([0809377](https://github.com/Jurkyy/util/commit/080937758b3a7f338d9c2739f3070d4722a945e0))
-
-
-
-## [0.6.2](https://github.com/Jurkyy/util/compare/v0.6.1...v0.6.2) (2024-11-11)
-
-
-### Bug Fixes
-
-* randomization broken ([9084451](https://github.com/Jurkyy/util/commit/908445185fb136ef6956b49645402832fc0634e1))
-
-
-
-## [0.6.1](https://github.com/Jurkyy/util/compare/v0.6.0...v0.6.1) (2024-11-11)
-
-
-### Bug Fixes
-
-* randomization severe optimalisation ([55e839f](https://github.com/Jurkyy/util/commit/55e839f65f4736f91c1b1b064a16950c1f6e4fe8))
-
-
-
-# [0.6.0](https://github.com/Jurkyy/util/compare/v0.5.0...v0.6.0) (2024-11-11)
-
-
-### Features
-
-* add normalization ([3c83d67](https://github.com/Jurkyy/util/commit/3c83d67f68af2a79dfd700590c25faecb980d0ff))
 
 
 
