@@ -148,6 +148,70 @@ function acp() {
 	fi
 }
 
+function gitinit() {
+    # Check if gh (GitHub CLI) is installed
+    if ! command -v gh &> /dev/null; then
+        echo "GitHub CLI (gh) is not installed. Please install it first:"
+        echo "https://cli.github.com/"
+        return 1
+    fi
+    
+    # Check if a repository name was provided
+    if [ -z "$1" ]; then
+        echo "Please provide a repository name"
+        return 1
+    fi
+    
+    REPO_NAME="$1"
+    
+    # Get GitHub username from git config
+    GITHUB_USERNAME=$(git config --get github.user)
+    if [ -z "$GITHUB_USERNAME" ]; then
+        echo "GitHub username not found in git config"
+        echo "Please set it with: git config --global github.user YOUR_USERNAME"
+        return 1
+    fi
+    
+    # Create and enter directory
+    mkdir -p "$REPO_NAME" || return 1
+    cd "$REPO_NAME" || return 1
+    
+    # Create the repository on GitHub first
+    echo "Creating repository on GitHub..."
+    gh repo create "$REPO_NAME" --private --confirm || return 1
+    
+    # Initialize git repository
+    git init
+    
+    # Create and add README if it doesn't exist
+    if [ ! -f "README.md" ]; then
+        echo "# $REPO_NAME" > README.md
+    fi
+    
+    # Add all files and make initial commit
+    git add .
+    git commit -m ":tada: Initial commit"
+    
+    # Rename the default branch to main
+    git branch -M main
+    
+    # Add remote and push
+    git remote add origin "git@github.com:$GITHUB_USERNAME/$REPO_NAME.git"
+    
+    if git push -u origin main; then
+        echo "Successfully initialized and pushed to GitHub repository: $REPO_NAME"
+        echo "Repository URL: https://github.com/$GITHUB_USERNAME/$REPO_NAME"
+        echo "Local directory: $(pwd)"
+    else
+        echo "Failed to push to GitHub. Please ensure:"
+        echo "1. Your SSH key is properly configured"
+        echo "2. You have the correct permissions"
+        echo "3. Your GitHub username ($GITHUB_USERNAME) is correct"
+        # Return to original directory on failure
+        cd - > /dev/null
+        return 1
+    fi
+}
 # Load ~/.env files for exports
 source ~/projects/util/scripts/load_env.sh ~/.env
 list_vars
