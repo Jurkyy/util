@@ -111,7 +111,7 @@ source $ZSH/oh-my-zsh.sh
 # Aliases
 alias zshrc="nvim ~/.zshrc"
 
-alias gb="git checkout -b"
+alias gb="git switch -c"
 alias gs="git status"
 alias pd="git pull"
 alias gd="git diff ."
@@ -128,9 +128,9 @@ alias bat="batcat"
 alias ask="nvim -c \"PChatNew\""
 alias catclip='f() { cat "$@" | xclip -selection clipboard; }; f'
 
-alias pic="pixi init --format pyproject"
-alias pii="pixi add"
-alias pir="pixi run python"
+alias pic="pixi init --format pyproject" # rework into func such that it forces name pick
+alias pii="pixi add" # rework into func such that it restart "pixi shell"
+alias pir="pixi run python" #Might be useless
 
 alias st="~/starttmux.sh"
 alias ls="eza -l --group-directories-first -s date"
