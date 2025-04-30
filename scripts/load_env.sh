@@ -78,8 +78,3 @@ list_vars() {
     fi
   done <"$ENV_FILE"
 }
-
-# Add list_vars function to shell
-export -f list_vars
-
-echo "Use 'list_vars' to see the names of loaded variables"

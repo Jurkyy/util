@@ -226,7 +226,7 @@ export FZF_DEFAULT_OPTS="--ansi"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 eval "$(atuin init zsh)"
-export PATH=$PATH:/home/wolf/.pixi/bin
+export PATH="$PATH:/home/wolf/.pixi/bin"
 eval "$(pixi completion --shell zsh)"
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
