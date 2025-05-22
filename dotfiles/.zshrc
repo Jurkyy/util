@@ -113,8 +113,8 @@ alias zshrc="nvim ~/.zshrc"
 
 alias gb="git switch -c"
 alias gs="git status"
-alias pd="git pull"
 alias gd="git diff ."
+alias pd="git_pull_default_branch"
 
 alias n="nvim"
 alias g="git"
@@ -128,7 +128,7 @@ alias bat="batcat"
 alias ask="nvim -c \"PChatNew\""
 alias catclip='f() { cat "$@" | xclip -selection clipboard; }; f'
 
-alias pic="pixi init --format pyproject" # rework into func such that it forces name pick
+alias pic="pic" 
 alias pii="pixi add" # rework into func such that it restart "pixi shell"
 alias pir="pixi run python" #Might be useless
 
@@ -137,6 +137,72 @@ alias ls="eza -l --group-directories-first -s date"
 alias ll="eza -al --group-directories-first -s date"
 
 # Functions
+function pic() {
+  # Display the prompt using echo
+  echo -n "Enter your project name: "
+  # Read the user's input
+  read project_name
+
+  # Check if the project name is empty
+  if [ -z "$project_name" ]; then
+    echo "Project name cannot be empty. Aborting."
+    return 1 # Exit the function with an error status
+  fi
+
+  # Run the pixi init command with the specified project name
+  pixi init --format pyproject "$project_name"
+}
+function git_pull_default_branch() {
+  # Check if we are in a git repository
+  if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+    echo "Error: Not inside a git repository."
+    return 1
+  fi
+
+  local branch_to_checkout=""
+
+  # Check if 'main' branch exists locally
+  if git show-ref --verify --quiet refs/heads/main; then
+    branch_to_checkout="main"
+  # If 'main' doesn't exist, check if 'master' branch exists locally
+  elif git show-ref --verify --quiet refs/heads/master; then
+    branch_to_checkout="master"
+  else
+    # If neither exists locally, try to find the default branch from origin
+    local default_remote_branch
+    default_remote_branch=$(git ls-remote --symref origin HEAD | sed -nE 's|^.*refs/heads/(\S+).+$|\1|p')
+
+    if [ -n "$default_remote_branch" ]; then
+      echo "Neither 'main' nor 'master' found locally. Checking out default branch from origin: '$default_remote_branch'."
+      branch_to_checkout="$default_remote_branch"
+    else
+      echo "Could not determine a default branch to checkout (neither 'main', 'master' nor origin/HEAD found)."
+      echo "Running git pull on the current branch."
+      git pull
+      return 0
+    fi
+  fi
+
+  # Checkout the determined branch if it's not the current branch
+  local current_branch
+  current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+  if [ "$branch_to_checkout" != "$current_branch" ]; then
+    if git checkout "$branch_to_checkout"; then
+      echo "Checked out branch '$branch_to_checkout'."
+    else
+      echo "Error: Could not checkout branch '$branch_to_checkout'."
+      return 1
+    fi
+  else
+    echo "Already on branch '$branch_to_checkout'."
+  fi
+
+  # Finally, run git pull
+  echo "Running git pull..."
+  git pull
+}
+
 function acp() {
 	git add .
 	git commit -am "$1"
@@ -222,6 +288,10 @@ list_vars
 export FZF_DEFAULT_COMMAND='fd --type file --color=always --follow --hidden --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_DEFAULT_OPTS="--ansi"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ] && \. "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
